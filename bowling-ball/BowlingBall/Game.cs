@@ -1,22 +1,53 @@
-﻿using System;
+﻿using BowlingBall.Contract;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BowlingBall.BusinessLogic;
 
 namespace BowlingBall
 {
-    public class Game
-    {
-        public void Roll(int pins)
-        {
-            // Add your logic here. Add classes as needed.
-        }
+	/* Summary
+	 * Author: Anshuman Jha
+	  
+	 * Special Requirement:
+	   i>   No need to check for valid rolls.
+	   ii>  No need to check for correct number of rolls & frames.
+	   iii> No need to provide intermediate frame score.
+	   iv>  No need to prevent bad input data.
+	  
+	 * Solution:
+	   Game.cs file is the actual class that class libraray consumer will be using.
+  
+	   i>  2 Game Constructors created for normal Dependency Injection & for Test Project to Inject Dependency.
 
-        public int GetScore()
-        {
-            // Returns the final score of the game.
-            return 0;
-        }
-    }
+       ii> Roll method to register a roll made by player.
+
+       iii>GetScore method to get the final game score based on frames played, for our game play frames will be 10. 
+     
+	 */
+	public class Game
+	{
+		private readonly List<IFrame> frames;
+		private readonly IGameScore gameScore;
+		private readonly List<int> rolls;
+
+		public Game()  
+			: this(new GameFrame(), new GameScore()){ }  
+
+		public Game(IGameFrame gameframe, IGameScore score)
+		{
+			frames = gameframe.GetAllFrames();
+			gameScore = score;
+			rolls = new List<int>();
+		}
+
+		public void Roll(int pins)
+		{
+			rolls.Add(pins);
+		}
+
+		public int GetScore()
+		{
+			return gameScore.FinalGameScore(frames, rolls);
+		}
+
+	}
 }
